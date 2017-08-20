@@ -85,6 +85,15 @@ describe('User Route tests', function() {
       });
     });
 
-
+    describe('With a valid authentication header', function() {
+      it('Should return a signed user token', done => {
+        request(`${url}/api/login`)
+        .auth('wrong', 'wrong')
+        .end(err => {
+          expect(err.status).to.equal(401);
+          done();
+        });
+      });
+    });
   });
 });
