@@ -14,7 +14,9 @@ hooks.authenticateUser = function (templateName) {
   debug('authenticateUser');
 
   return new Promise((resolve, reject) => {
-    let newUser = this.users[templateName] = new User(templates.templateName);
+
+    let newUser = hooks.users[templateName] = new User(templates[templateName]);
+
     newUser.encryptPassword(newUser.passWord)
     .then(user => user.generateToken())
     .then(token => hooks.tokens[templateName] = token)

@@ -27,6 +27,15 @@ userRouter.post('/api/signup', jasonParser, function(req, res, next) {
 
 });
 
-userRouter.get('/api.login', basicAuth, function(req, res, next) {
+userRouter.get('/api/login', basicAuth, function(req, res, next) {
   debug('GET /api/login');
+
+  let passWord = req.auth.passWord;
+  delete req.auth.passWord;
+
+  User.findOne(req.auth)
+  .then(user => user.attemptLogin(passWord))
+  .then(user => user.generateToken())
+  .then(token => res.json(token))
+  .catch(err => next(createError(401, err.message)));
 });

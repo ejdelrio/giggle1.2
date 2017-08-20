@@ -27,16 +27,17 @@ userSchema.methods.encryptPassword = function(password) {
     bcrypt.hash(password, 10, (err, cryptedPass) => {
       if(err) return reject(err);
       this.passWord = cryptedPass;
-      return resolve(this);
+      resolve(this);
     });
   });
 };
 
-userSchema.methods.attempLogin = function(password) {
+userSchema.methods.attemptLogin = function(password) {
   debug('attemptLogin');
 
   return new Promise((resolve, reject) => {
-    bcrypt.compare(password, this.password, (err, valid) => {
+    console.log(this);
+    bcrypt.compare(password, this.passWord, (err, valid) => {
       if(err) reject(err);
       if(!valid) return reject(createError(401, 'Unauthorized'));
       resolve(this);

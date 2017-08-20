@@ -57,4 +57,34 @@ describe('User Route tests', function() {
       });
     });
   });
+
+  describe('GET /api/login', function() {
+    before(done => {
+      authenticateUser('userOne')
+      .then(() => done())
+      .catch(err => done(err));
+    });
+
+    after(done => {
+      clearAll()
+      .then(() => done())
+      .catch(err => done(err));
+    });
+
+    describe('With a valid authentication header', function() {
+      it('Should return a signed user token', done => {
+        let model = templates.userOne;
+        request(`${url}/api/login`)
+        .auth(model.userName, model.passWord)
+        .end((err, res) => {
+          if(err) return done(err);
+          expect(res.status).to.equal(200);
+          expect(res.body).to.be.a('string');
+          done();
+        });
+      });
+    });
+
+
+  });
 });
