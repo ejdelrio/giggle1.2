@@ -17,7 +17,7 @@ const userSchema = new Schema({
   videos: [{type: Schema.Types.ObjectId, ref: 'video'}],
   bookings: [{type: Schema.Types.ObjectId, ref: 'booking'}],
   conversations: [{type: Schema.Types.ObjectId, ref: 'convo-node'}],
-  location: {type: Schema.Types.ObjectId, ref: 'location', required: true}
+  location: {type: Schema.Types.ObjectId, ref: 'location', required: false}
 });
 
 userSchema.methods.encryptPassword = function(password) {
@@ -36,7 +36,7 @@ userSchema.methods.attempLogin = function(password) {
   debug('attemptLogin');
 
   return new Promise((resolve, reject) => {
-    bcrypt.compare(password, this.password, (err, vali) => {
+    bcrypt.compare(password, this.password, (err, valid) => {
       if(err) reject(err);
       if(!valid) return reject(createError(401, 'Unauthorized'));
       resolve(this);
@@ -63,7 +63,7 @@ userSchema.methods.generateHash = function() {
       });
     }
   });
-}
+};
 
 userSchema.methods.generateToken = function() {
   debug('generateToken');
@@ -73,6 +73,6 @@ userSchema.methods.generateToken = function() {
     .then( findHash => resolve(jwt.sign({ token: findHash }, process.env.APP_SECRET)))
     .catch( err => reject(err));
   });
-}
+};
 
 module.exports = mongoose.model('user', userSchema);

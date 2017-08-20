@@ -19,3 +19,5 @@ templates.userThree = {
   passWord: 'vermont4Life',
   email: 'turtle@turtle.com'
 };
+
+templates.url = `localhost:${process.env.PORT}`;

@@ -10,7 +10,7 @@ hooks.users = {};
 hooks.tokens = {};
 hooks.models = {};
 
-hooks.prototype.authenticateUser = function (templateName) {
+hooks.authenticateUser = function (templateName) {
   debug('authenticateUser');
 
   return new Promise((resolve, reject) => {
@@ -23,7 +23,7 @@ hooks.prototype.authenticateUser = function (templateName) {
   });
 };
 
-hooks.prototype.storeModel = function(schemaName, templateName, userName, props) {
+hooks.storeModel = function(schemaName, templateName, userName, props) {
   debug('storeModel');
 
   return new Promise((resolve, reject) => {
@@ -40,7 +40,7 @@ hooks.prototype.storeModel = function(schemaName, templateName, userName, props)
   });
 };
 
-hooks.prototype.clearAll = function() {
+hooks.clearAll = function() {
 
   return Promise.all([
     User.remove({})
