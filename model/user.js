@@ -17,7 +17,7 @@ const userSchema = new Schema({
   videos: [{type: Schema.Types.ObjectId, ref: 'video'}],
   bookings: [{type: Schema.Types.ObjectId, ref: 'booking'}],
   conversations: [{type: Schema.Types.ObjectId, ref: 'convo-node'}],
-  location: {type: Schema.Types.ObjectId, ref: 'location', required: false}
+  location: {type: Schema.Types.ObjectId, ref: 'Location', required: false}
 });
 
 userSchema.methods.encryptPassword = function(password) {
@@ -36,7 +36,6 @@ userSchema.methods.attemptLogin = function(password) {
   debug('attemptLogin');
 
   return new Promise((resolve, reject) => {
-    console.log(this);
     bcrypt.compare(password, this.passWord, (err, valid) => {
       if(err) reject(err);
       if(!valid) return reject(createError(401, 'Unauthorized'));

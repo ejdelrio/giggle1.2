@@ -5,7 +5,8 @@ const templates = module.exports = {};
 templates.userOne = {
   userName: 'steve_jobs',
   email: 'windowsCanSuckIt@apple.com',
-  passWord: 'googleCanSuckItTo'
+  passWord: 'googleCanSuckItTo',
+  loc: [1, 3]
 };
 
 templates.userTwo = {

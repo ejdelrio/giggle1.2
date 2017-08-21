@@ -2,6 +2,7 @@
 
 const debug = require('debug')('giggle: Hook Module');
 const User = require('../../model/user.js');
+const Loc = require('../../model/user/userLocation.js');
 const templates = require('./templates.js');
 
 const hooks = module.exports = {};
