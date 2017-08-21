@@ -17,8 +17,14 @@ hooks.authenticateUser = function (templateName) {
   return new Promise((resolve, reject) => {
 
     let newUser = hooks.users[templateName] = new User(templates[templateName]);
+    let loc = templates[templateName].loc;
+    let newLoc = new Loc({userID: newUser._id, loc: loc});
 
-    newUser.encryptPassword(newUser.passWord)
+    newUser.location = newLoc._id;
+
+
+    newLoc.save()
+    .then(() => newUser.encryptPassword(newUser.passWord))
     .then(user => user.generateToken())
     .then(token => hooks.tokens[templateName] = token)
     .then(() => resolve(newUser))
@@ -46,7 +52,8 @@ hooks.storeModel = function(schemaName, templateName, userName, props) {
 hooks.clearAll = function() {
 
   return Promise.all([
-    User.remove({})
+    User.remove({}),
+    Loc.remove({})
   ])
   .then(() => {
     hooks.users = {};

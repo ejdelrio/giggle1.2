@@ -17,7 +17,7 @@ const userSchema = new Schema({
   videos: [{type: Schema.Types.ObjectId, ref: 'video'}],
   bookings: [{type: Schema.Types.ObjectId, ref: 'booking'}],
   conversations: [{type: Schema.Types.ObjectId, ref: 'convo-node'}],
-  location: {type: Schema.Types.ObjectId, ref: 'Location', required: false}
+  location: {type: Schema.Types.ObjectId, ref: 'Location', required: true}
 });
 
 userSchema.methods.encryptPassword = function(password) {

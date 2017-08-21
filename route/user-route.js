@@ -27,12 +27,10 @@ userRouter.post('/api/signup', jasonParser, function(req, res, next) {
   newUser.location = userLocation._id;
 
 
-  console.log('XXXXXXXX', userLocation)
+
   userLocation.save()
   .then(() => newUser.encryptPassword(passWord))
-  .then(user => {
-    return user.generateToken()
-  })
+  .then(user => user.generateToken())
   .then(token => res.json(token))
   .catch(err => next(createError(400, err.message)));
 
@@ -45,11 +43,9 @@ userRouter.get('/api/login', basicAuth, function(req, res, next) {
   delete req.auth.passWord;
 
   User.findOne(req.auth)
+  .populate('location')
   .then(user => user.attemptLogin(passWord))
-  .then(user => {
-    console.log(user)
-    user.generateToken()
-  })
+  .then(user => user.generateToken())
   .then(token => res.json(token))
   .catch(err => next(createError(401, err.message)));
 });
