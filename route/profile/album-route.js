@@ -47,6 +47,6 @@ albumRouter.put('/api/album/:albumID', jsonParser, bearerAuth, profileFetch, fun
 albumRouter.delete('/api/album/:albumID', jsonParser, bearerAuth, profileFetch, function(req, res, next) {
   debug('DELETE /api/album/:albumID');
   /*Need to research mongoose to find out how to find and DELETE
-  children of the album. this includes tracks :D */
+  children of the album. this includes tracks and shit like that :D */
 
 });
