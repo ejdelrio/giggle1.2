@@ -29,17 +29,24 @@ albumRouter.get('/api/album/:profileID', function(req, res, next) {
   .catch(err => next(createError(404, err)));
 });
 
-albumRouter.put('api/album/:albumID', jsonParser, bearerAuth, profileFetch, function(req, res, next) {
+albumRouter.put('/api/album/:albumID', jsonParser, bearerAuth, profileFetch, function(req, res, next) {
   debug('PUT /api/album/:albumID');
 
   Album.findOneAndUpdate(
     {
       profileID: req.profile._id,
-      _id: req.params.albumdID
+      _id: req.params.albumID
     },
     req.body,
     {new: true}
   )
   .then(album => res.json(album))
   .catch(err => next(createError(400, err)));
+});
+
+albumRouter.delete('/api/album/:albumID', jsonParser, bearerAuth, profileFetch, function(req, res, next) {
+  debug('DELETE /api/album/:albumID');
+  /*Need to research mongoose to find out how to find and DELETE
+  children of the album. this includes tracks :D */
+
 });
