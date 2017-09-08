@@ -5,7 +5,7 @@ const debug = require('debug')('giggle: Loc Router');
 const jsonParser = require('body-parser').json();
 const createError = require('http-errors');
 
-const Loc = require('../../model/user/userLocation.js');
+const Loc = require('../../model/profile/userLocation.js');
 const bearerAuth = require('../../lib/bearer.js');
 
 const locRouter = module.exports = new Router();

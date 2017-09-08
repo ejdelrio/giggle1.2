@@ -11,4 +11,4 @@ const albumSchema = new Schema({
   datePublished: {type: Date, required: true, default: Date.now}
 });
 
-const Album = mongoose.model('album', albumSchema);
+const Album = module.exports = mongoose.model('album', albumSchema);

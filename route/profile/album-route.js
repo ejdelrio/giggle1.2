@@ -9,7 +9,7 @@ const profileFetch = require('../../lib/profileFetch.js');
 const bearerAuth = require('../../lib/bearer.js');
 const Album = require('../../model/profile/album.js');
 
-const albumRouter = new Router();
+const albumRouter = module.exports = new Router();
 
 albumRouter.post('/api/album', jsonParser, bearerAuth, profileFetch, function(req, res, next) {
   debug('POST /api/album');

@@ -2,12 +2,15 @@
 
 const debug = require('debug')('giggle: Hook Module');
 const User = require('../../model/user.js');
-const Loc = require('../../model/user/userLocation.js');
+const Loc = require('../../model/profile/userLocation.js');
+const Profile = require('../../model/profile.js');
+const Album = require('../../model/profile/album.js');
 const templates = require('./templates.js');
 
 const hooks = module.exports = {};
 
 hooks.users = {};
+hooks.profiles = {};
 hooks.tokens = {};
 hooks.models = {};
 hooks.locations = {};
@@ -18,8 +21,10 @@ hooks.authenticateUser = function (templateName) {
   return new Promise((resolve, reject) => {
 
     let newUser = hooks.users[templateName] = new User(templates[templateName]);
+    let newProfile = hooks.profiles[templateName] = new Profile({userID: newUser._id});
 
-    newUser.encryptPassword(newUser.passWord)
+    newProfile.save()
+    .then(() => newUser.encryptPassword(newUser.passWord))
     .then(user => user.generateToken())
     .then(token => hooks.tokens[templateName] = token)
     .then(() => resolve(newUser))
@@ -48,7 +53,10 @@ hooks.clearAll = function() {
 
   return Promise.all([
     User.remove({}),
-    Loc.remove({})
+    Loc.remove({}),
+    Profile.remove({}),
+    Album.remove({})
+
   ])
   .then(() => {
     hooks.users = {};

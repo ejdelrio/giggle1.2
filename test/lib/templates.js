@@ -20,4 +20,9 @@ templates.userThree = {
   email: 'turtle@turtle.com'
 };
 
+templates.album = {
+  title: 'Butt Juice',
+  genre: 'Metal'
+};
+
 templates.url = `localhost:${process.env.PORT}`;

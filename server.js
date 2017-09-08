@@ -11,7 +11,7 @@ const PORT = process.env.PORT || 3000;
 const app = express();
 const error = require('./lib/error.js');
 const userRouter = require('./route/user-route.js');
-const locRouter = require('./route/user/loc-route.js');
+const albumRouter = require('./route/profile/album-route.js');
 
 dotenv.load();
 mongoose.connect(process.env.MONGODB_URI);
@@ -19,7 +19,7 @@ mongoose.connect(process.env.MONGODB_URI);
 app.use(cors());
 app.use(morgan('dev'));
 app.use(userRouter);
-app.use(locRouter);
+app.use(albumRouter);
 app.use(error);
 
 app.listen(PORT, () => {
