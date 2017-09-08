@@ -20,3 +20,26 @@ albumRouter.post('/api/album', jsonParser, bearerAuth, profileFetch, function(re
   .then(album => res.json(album))
   .catch(err => next(createError(400, err)));
 });
+
+albumRouter.get('/api/album/:profileID', function(req, res, next) {
+  debug('GET /api/album/:profileID');
+
+  Album.find({profileID: req.params.profileID})
+  .then(albums => res.json(albums))
+  .catch(err => next(createError(404, err)));
+});
+
+albumRouter.put('api/album/:albumID', jsonParser, bearerAuth, profileFetch, function(req, res, next) {
+  debug('PUT /api/album/:albumID');
+
+  Album.findOneAndUpdate(
+    {
+      profileID: req.profile._id,
+      _id: req.params.albumdID
+    },
+    req.body,
+    {new: true}
+  )
+  .then(album => res.json(album))
+  .catch(err => next(createError(400, err)));
+});
