@@ -13,16 +13,10 @@ const userSchema = new Schema({
   passWord: {type: String, required: true},
   email: {type: String, required: true, unique: true},
   hash: {type: String, unique: true},
-  photos: [{type: Schema.Types.ObjectId, ref: 'photo'}],
-  videos: [{type: Schema.Types.ObjectId, ref: 'video'}],
-  bookings: [{type: Schema.Types.ObjectId, ref: 'booking'}],
-  conversations: [{type: Schema.Types.ObjectId, ref: 'convo-node'}],
-  location: {type: Schema.Types.ObjectId, ref: 'Location', required: true}
 });
 
 userSchema.methods.encryptPassword = function(password) {
   debug('encryptPassword');
-
   return new Promise((resolve, reject) => {
     bcrypt.hash(password, 10, (err, cryptedPass) => {
       if(err) return reject(err);
@@ -53,9 +47,11 @@ userSchema.methods.generateHash = function() {
     _generateHash.call(this);
 
     function _generateHash() {
-      this.findHash = crypto.randomBytes(32).toString('hex');
+      this.hash = crypto.randomBytes(32).toString('hex');
       this.save()
-      .then( () => resolve(this.findHash))
+      .then( () => {
+        return resolve(this.hash);
+      })
       .catch( err => {
         if ( tries > 3) return reject(err);
         tries++;
@@ -70,7 +66,7 @@ userSchema.methods.generateToken = function() {
 
   return new Promise((resolve, reject) => {
     this.generateHash()
-    .then( findHash => resolve(jwt.sign({ token: findHash }, process.env.APP_SECRET)))
+    .then(hash => resolve(jwt.sign({ token: hash }, process.env.APP_SECRET)))
     .catch( err => reject(err));
   });
 };

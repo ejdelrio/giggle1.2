@@ -5,9 +5,9 @@ const Schema = mongoose.Schema;
 const debug = require('debug')('giggle: Location Model');
 
 const locationSchema = new Schema({
-  userID: {type: Schema.Types.ObjectId, required: true, unique: true},
+  profileID: {type: Schema.Types.ObjectId, required: true, unique: true, ref: 'profile'},
   loc: {type: [Number], index: '2d'},
-  lastupDated: {type: Date, default: Date.now}
+  lastUpdated: {type: Date, default: Date.now}
 });
 
-module.exports = mongoose.model('Location', locationSchema);
+module.exports = mongoose.model('location', locationSchema);

@@ -10,6 +10,7 @@ const hooks = module.exports = {};
 hooks.users = {};
 hooks.tokens = {};
 hooks.models = {};
+hooks.locations = {};
 
 hooks.authenticateUser = function (templateName) {
   debug('authenticateUser');
@@ -17,14 +18,8 @@ hooks.authenticateUser = function (templateName) {
   return new Promise((resolve, reject) => {
 
     let newUser = hooks.users[templateName] = new User(templates[templateName]);
-    let loc = templates[templateName].loc;
-    let newLoc = new Loc({userID: newUser._id, loc: loc});
 
-    newUser.location = newLoc._id;
-
-
-    newLoc.save()
-    .then(() => newUser.encryptPassword(newUser.passWord))
+    newUser.encryptPassword(newUser.passWord)
     .then(user => user.generateToken())
     .then(token => hooks.tokens[templateName] = token)
     .then(() => resolve(newUser))

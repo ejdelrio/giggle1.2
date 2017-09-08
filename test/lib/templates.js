@@ -6,13 +6,12 @@ templates.userOne = {
   userName: 'steve_jobs',
   email: 'windowsCanSuckIt@apple.com',
   passWord: 'googleCanSuckItTo',
-  loc: [1, 3]
 };
 
 templates.userTwo = {
   userName: 'bill_gates',
   passWord: 'richerThanYou',
-  email: 'godOfMicroSoft@microsoft.com'
+  email: 'godOfMicroSoft@microsoft.com',
 };
 
 templates.userThree = {

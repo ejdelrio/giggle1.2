@@ -5,8 +5,9 @@ const Schema = mongoose.Schema;
 const debug = require('debug')('giggle: Album Model');
 
 const albumSchema = new Schema({
-  userID: {type: Schema.Types.ObjectId, required: true, ref: 'user'},
+  profileID: {type: Schema.Types.ObjectId, required: true, ref: 'profile'},
   title: {type: String, required: true},
+  genre: {type: String, required: true},
   datePublished: {type: Date, required: true, default: Date.now}
 });
 

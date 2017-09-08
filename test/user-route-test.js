@@ -30,7 +30,7 @@ describe('User Route tests', function() {
         .end((err, res) => {
           if(err) return done(err);
           expect(res.status).to.equal(200);
-          expect(res.body).to.be.a('string');
+          expect(res.body).to.be.a('string'); 
           done();
         });
       });
