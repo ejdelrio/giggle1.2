@@ -10,7 +10,7 @@ const jsonParser = require('body-parser').json();
 const createError = require('http-errors');
 const debug = require('debug')('giggle:track-route');
 
-const Photo = require('../../model/track.js');
+const Photo = require('../../model/photo.js');
 const bearerAuth = require('../lib/bearer-auth-middleware.js');
 const profileFetch = require('../../lib/profileFetch.js');
 
