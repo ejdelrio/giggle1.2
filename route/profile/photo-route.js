@@ -10,8 +10,7 @@ const jsonParser = require('body-parser').json();
 const createError = require('http-errors');
 const debug = require('debug')('giggle:track-route');
 
-const Album = require('../model/album.js');
-const Track = require('../model/track.js');
+const Photo = require('../../model/track.js');
 const bearerAuth = require('../lib/bearer-auth-middleware.js');
 const profileFetch = require('../../lib/profileFetch.js');
 
@@ -21,8 +20,8 @@ const s3 = new AWS.S3();
 const dataDir = `${__dirname}/../data`;
 const upload = multer({ dest: dataDir });
 
-const trackRouter = module.exports = Router();
-var trackKey = '';
+const photoRouter = module.exports = Router();
+var photoKey = '';
 
 function s3uploadProm(params) {
   return new Promise((resolve, reject) => {
@@ -33,8 +32,8 @@ function s3uploadProm(params) {
   });
 }
 
-trackRouter.post('/api/album/:id/track', bearerAuth, profileFetch, upload.single('soundFile'), function (req, res, next) {
-  debug('POST: /api/album/:id/track');
+photoRouter.post('/api/photo', bearerAuth, profileFetch, upload.single('imageFile'), function (req, res, next) {
+  debug('POST: /api/photo');
 
   if (!req.file) return next(createError(400, 'file not found'));
 
@@ -49,26 +48,20 @@ trackRouter.post('/api/album/:id/track', bearerAuth, profileFetch, upload.single
     Key: `${req.file.filename}${ext}`,
     Body: fs.createReadStream(req.file.path)
   };
+  req.body.profileID = req.user.profile._id;
 
-  Album.findById(req.params.id)
-  .then(album => {
-    let track = new Track(req.body);
-    track.albumID = album._id;
-    track.profileID = req.profile._id;
-  })
-  .then(() => s3uploadProm(params))
+
+  s3uploadProm(params)
   .then(s3data => {
-    trackKey = s3data.key;
+    let photoKey = s3data.key;
     del([`${dataDir}/*`]);
-    let trackData = {
-      title: req.body.title,
+    let photoData = {
       url: req.body.url,
-      profileID: req.user._id,
-      albumID: req.params.id,
-      awsKey: trackKey,
+      profileID: req.body.profileID,
+      awsKey: photoKey,
       awsURI: s3data.location
     };
-    return Track.create(trackData);
+    return new Photo(photoData).save();
   })
   .then(track => {
     console.log('CREATED THE TRACK!', track);
@@ -78,11 +71,11 @@ trackRouter.post('/api/album/:id/track', bearerAuth, profileFetch, upload.single
 
 });
 
-trackRouter.delete('/api/album/:id/track/:_id', bearerAuth, profileFetch, function (req, res, done) {
+photoRouter.delete('/api/photo/:id', bearerAuth, profileFetch, function (req, res, done) {
   console.log(req.body);
   var params = {
     Bucket: process.env.AWS_BUCKET,
-    Key: `${trackKey}`
+    Key: `${photoKey}`
   };
 
   function s3deleteProm(params) {
@@ -94,8 +87,7 @@ trackRouter.delete('/api/album/:id/track/:_id', bearerAuth, profileFetch, functi
     });
   }
 
-  Album.findById(req.params.id)
-  .then(() => Track.findByIdAndRemove(`${req.params._id}`))
+  Photo.findByIdAndRemove(`${req.params._id}`)
   .then(() => s3deleteProm(params))
   .then(() => console.log('deleted ', params.Key))
   .then(() => {
