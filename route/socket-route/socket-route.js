@@ -15,11 +15,14 @@ module.exports = server => {
 
     socketMessage(socket);
 
+    socket.on('balls-*', () => {
+      console.log('it works!!');
+    })
+
     socket.on('requestBooking', (booking, user) => {
       debug('requestBooking emission');
 
 
     });
-
   });
 };
