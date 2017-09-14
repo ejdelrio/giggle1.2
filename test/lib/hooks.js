@@ -21,10 +21,8 @@ hooks.authenticateUser = function (templateName) {
   return new Promise((resolve, reject) => {
 
     let newUser = hooks.users[templateName] = new User(templates[templateName]);
-    let newProfile = hooks.profiles[templateName] = new Profile({userID: newUser._id});
 
-    newProfile.save()
-    .then(() => newUser.encryptPassword(newUser.passWord))
+    newUser.encryptPassword(newUser.passWord)
     .then(user => user.generateToken())
     .then(token => hooks.tokens[templateName] = token)
     .then(() => resolve(newUser))
