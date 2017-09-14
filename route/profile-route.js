@@ -30,7 +30,7 @@ profileRouter.get('/api/profile', bearerAuth, profileFetch, function(req, res, n
   next();
 });
 
-profileRouter.get('/api/userQuery/:max/:limit', jsonParser, bearerAuth, profileFetch, function(req, res, next) {
+profileRouter.get('/api/userQuery/:max/:limit', bearerAuth, profileFetch, function(req, res, next) {
   debug('GET /api/userQuery/:max/:limit'); //Test to see if radial searches work;
 
   //the limit parameter dictates how many items we'll pull per query
@@ -42,7 +42,7 @@ profileRouter.get('/api/userQuery/:max/:limit', jsonParser, bearerAuth, profileF
     location: {
       $near: coords,
       $maxDistance: maxDistance,
-      $minDistance: 0
+      $minDistance: 0.0000000000000000000000000000001
     },
     genre: ['blues', 'metal']
 

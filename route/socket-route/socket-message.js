@@ -22,18 +22,17 @@ module.exports = socket => {
     .catch(err => console.error(err));
   });
 
-  socket.on('startConvo', (members, message) => {
+  socket.on('startConvo', (data) => {
     debug('startConvo Emission');
-    let allProfileIDs = members.map(member => member._id);
 
-    new Conversation({members: allProfileIDs}).save()
+    new Conversation({members: data.members}).save()
     .then(convo => {
-      message.convoID = convo;
-      return message.save();
+      data.message.convoID = convo;
+      return new Message(data.message).save();
     })
     .then(() => {
-      members.forEach(profile => {
-        socket.emit(`updateConvos-${profile._id}`);
+      data.members.forEach(userName => {
+        socket.emit(`updateConvos-${userName}`);
       });
     });
   });
