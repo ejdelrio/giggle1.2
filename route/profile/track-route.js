@@ -10,9 +10,9 @@ const jsonParser = require('body-parser').json();
 const createError = require('http-errors');
 const debug = require('debug')('giggle:track-route');
 
-const Album = require('../model/album.js');
-const Track = require('../model/track.js');
-const bearerAuth = require('../lib/bearer-auth-middleware.js');
+const Album = require('../../model/profile/album.js');
+const Track = require('../../model/profile/track.js');
+const bearerAuth = require('../../lib/bearer.js');
 const profileFetch = require('../../lib/profileFetch.js');
 
 AWS.config.setPromisesDependency(require('bluebird'));

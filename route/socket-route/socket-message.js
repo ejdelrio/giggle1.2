@@ -6,7 +6,7 @@ const debug = require('debug')('giggle: Socket Message');
 
 module.exports = socket => {
 
-  socket.on('addMessagetoConvo-*', message => {
+  socket.on('addMessagetoConvo', message => {
     debug('Message Emission');
     /*Recieves a message object through a socket emission
     The message is then emitted to the conversation ID.
@@ -15,7 +15,11 @@ module.exports = socket => {
     of the individual conversation. This will broadcast
     to all clients who's DB queries return the matching convo :D
     */
-    new Message(message).save();
+    new Message(message).save()
+    .then(message => {
+      socket.emit(`update-convo-${message.convoID}`);
+    })
+    .catch(err => console.error(err));
   });
 
   socket.on('startConvo', (members, message) => {
@@ -29,7 +33,7 @@ module.exports = socket => {
     })
     .then(() => {
       members.forEach(profile => {
-        socket.emit(`updateConvos: ${profile._id}`);
+        socket.emit(`updateConvos-${profile._id}`);
       });
     });
   });

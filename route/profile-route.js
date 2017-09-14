@@ -3,44 +3,63 @@
 const Router = require('express').Router;
 const debug = require('debug')('giggle: User Router');
 const createError = require('http-errors');
-const jasonParser = require('body-parser').json();
+const jsonParser = require('body-parser').json();
 
-const User = require('../model/user.js');
 const Profile = require('../model/profile.js');
-const basicAuth = require('../lib/basic.js');
+const bearerAuth = require('../lib/bearer.js');
+const profileFetch = require('../lib/profileFetch.js');
 
-const userRouter = module.exports = new Router();
+const profileRouter = module.exports = new Router();
 
-userRouter.post('/api/signup', jasonParser, function(req, res, next) {
-  debug('POST /api/signup');
-  
-  if(!req.body.userName) return next(createError(400, 'Username required'));
-  if(!req.body.passWord) return next(createError(400, 'Password required'));
+profileRouter.post('/api/profile', jsonParser, bearerAuth, function(req, res, next) {
+  debug('POST /api/profile');
 
-  let passWord = req.body.passWord;
-  delete req.body.passWord;
+  req.body.userID = req.user._id;
+  req.body.userName = req.user.userName;
 
-  let newUser = new User(req.body);
-
-
-
-  new Profile({userID: newUser._id}).save()
-  .then(() => newUser.encryptPassword(passWord))
-  .then(user => user.generateToken())
-  .then(token => res.json(token))
+  new Profile(req.body).save()
+  .then(profile => res.json(profile))
   .catch(err => next(createError(400, err.message)));
 
 });
 
-userRouter.get('/api/login', basicAuth, function(req, res, next) {
-  debug('GET /api/login');
+profileRouter.get('/api/profile', bearerAuth, profileFetch, function(req, res, next) {
+  debug('GET /api/profile');
 
-  let passWord = req.auth.passWord;
-  delete req.auth.passWord;
+  res.json(req.profile);
+  next();
+});
 
-  User.findOne(req.auth)
-  .then(user => user.attemptLogin(passWord))
-  .then(user => user.generateToken())
-  .then(token => res.json(token))
-  .catch(err => next(createError(401, err.message)));
+profileRouter.get('/api/userQuery/:max/:limit', jsonParser, bearerAuth, profileFetch, function(req, res, next) {
+  debug('GET /api/userQuery/:max/:limit'); //Test to see if radial searches work;
+
+  //the limit parameter dictates how many items we'll pull per query
+  //max represents max distance from the users location.
+  let maxDistance = req.params.max/1000;
+  let coords = req.profile.location;
+  let limit = parseInt(req.params.limit);
+  let locationQuery = {
+    location: {
+      $near: coords,
+      $maxDistance: maxDistance,
+      $minDistance: 0
+    },
+    genre: ['blues', 'metal']
+
+
+  };
+
+  Profile.find(locationQuery)
+  .limit(limit).exec(function(err, result) {
+    if(err) return next(createError(400, err.message));
+    res.json(result);
+  });
+});
+
+profileRouter.put('/api/profile', jsonParser, bearerAuth, profileFetch, function(req, res, next) {
+  debug('PUT /api/profile');
+
+  Profile.findByIdAndUpdate(req.profile._id, req.body, {new: true})
+  .then(profile => res.json(profile))
+  .catch(err => next(createError(404, err)));
 });
