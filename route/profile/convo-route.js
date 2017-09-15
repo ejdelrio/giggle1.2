@@ -15,6 +15,7 @@ convoRouter.get('/api/conversations', bearerAuth, profileFetch, function(req, re
   debug('GET /api/conversation');
 
   Conversation.find({members: req.profile.userName})
+  .populate('messages')
   .then(convos => res.json(convos))
   .catch(err => next(createError(404, err)));
 });

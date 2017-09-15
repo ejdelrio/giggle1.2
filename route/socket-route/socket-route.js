@@ -9,11 +9,15 @@ const socketMessage = require('./socket-message.js');
 module.exports = server => {
 
   const websocket = socketio(server);
+  // let chat = websocket.of('/chat');
+
 
   websocket.on('connection', (socket) => {
-    console.log('Connection Established', socket.id);
-    socket.on('balls-*', () => {
-      console.log('it works!!');
-    });
+    console.log('__SOCKET_CONNECTION__: ', socket.id);
+
+    socket.on('test', profile => websocket.sockets.emit('testing', `${profile.userName} logged on`));
+
+    socketMessage(socket, websocket);
+
   });
 };

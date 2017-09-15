@@ -5,7 +5,7 @@ const Message = require('../../model/profile/message.js');
 const debug = require('debug')('giggle: Socket Message');
 const createError = require('http-errors');
 
-module.exports = socket => {
+module.exports = (socket, io) => {
 
   socket.on('addMessagetoConvo', message => {
     debug('Message Emission');
@@ -16,29 +16,36 @@ module.exports = socket => {
     of the individual conversation. This will broadcast
     to all clients who's DB queries return the matching convo :D
     */
-    new Message(message).save()
-    .then(message => {
-      socket.emit(`update-convo-${message.convoID}`);
+    let newMessage = new Message(message);
+
+    Conversation.findBy({_id: message.convoID})
+    .then(convo => {
+      convo.messages.push(newMessage);
+      return convo.messages.save();
     })
-    .catch(err => console.error(err));
+    .then(() => newMessage.save())
+    .then(message => {
+      io.sockets.emit(`update-convo-${message.convoID}`);
+    })
+    .catch(err => createError(400, err));
   });
 
-  socket.on('chicken', () => {
-    console.log('bacon');
-    socket.emit('bacon');
-  });
 
   socket.on('startConvo', (data) => {
     debug('startConvo Emission');
-    new Conversation({members: data.members}).save()
-    .then(convo => {
-      data.message.convoID = convo._id;
+
+    let newConvo = new Conversation({members: data.members});
+    data.message.convoID = newConvo._id;
+    newConvo.push(data.message);
+
+    newConvo.save()
+    .then(() => {
       return new Message(data.message).save();
     })
     .then(() => {
       data.members.forEach(userName => {
         console.log(`__EMITTING__: updateConvos-${userName}`);
-        socket.emit(`updateConvos-${userName}`);
+        io.sockets.emit(`updateConvos-${userName}`, newConvo);
       });
     })
     .catch(err => createError(400, err));
