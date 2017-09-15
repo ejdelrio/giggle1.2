@@ -12,17 +12,8 @@ module.exports = server => {
 
   websocket.on('connection', (socket) => {
     console.log('Connection Established', socket.id);
-
-    socketMessage(socket);
-
     socket.on('balls-*', () => {
       console.log('it works!!');
-    })
-
-    socket.on('requestBooking', (booking, user) => {
-      debug('requestBooking emission');
-
-
     });
   });
 };

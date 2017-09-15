@@ -3,6 +3,7 @@
 const Conversation = require('../../model/profile/conversation');
 const Message = require('../../model/profile/message.js');
 const debug = require('debug')('giggle: Socket Message');
+const createError = require('http-errors');
 
 module.exports = socket => {
 
@@ -22,18 +23,24 @@ module.exports = socket => {
     .catch(err => console.error(err));
   });
 
+  socket.on('chicken', () => {
+    console.log('bacon');
+    socket.emit('bacon');
+  });
+
   socket.on('startConvo', (data) => {
     debug('startConvo Emission');
-
     new Conversation({members: data.members}).save()
     .then(convo => {
-      data.message.convoID = convo;
+      data.message.convoID = convo._id;
       return new Message(data.message).save();
     })
     .then(() => {
       data.members.forEach(userName => {
+        console.log(`__EMITTING__: updateConvos-${userName}`);
         socket.emit(`updateConvos-${userName}`);
       });
-    });
+    })
+    .catch(err => createError(400, err));
   });
 };

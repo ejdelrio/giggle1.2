@@ -7,14 +7,14 @@ const debug = require('debug')('giggle: Conversation Router');
 
 const bearerAuth = require('../../lib/bearer.js');
 const profileFetch = require('../../lib/profileFetch.js');
-const Conversation = require('../../model/conversation.js');
+const Conversation = require('../../model/profile/conversation.js');
 
 const convoRouter = module.exports = new Router();
 
 convoRouter.get('/api/conversations', bearerAuth, profileFetch, function(req, res, next) {
   debug('GET /api/conversation');
 
-  Conversation.find({members: req.profile._id})
+  Conversation.find({members: req.profile.userName})
   .then(convos => res.json(convos))
   .catch(err => next(createError(404, err)));
 });

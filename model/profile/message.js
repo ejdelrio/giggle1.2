@@ -6,7 +6,7 @@ const debug = require('debug')('giggle: Message Model');
 
 const messageSchema = new Schema({
   senderID: {type: Schema.Types.ObjectId, ref: 'user', required: true},
-  convoId: {type: Schema.Types.ObjectId, ref: 'convo', required: true},
+  convoID: {type: Schema.Types.ObjectId, ref: 'convo', required: true},
   content: {type: String, required: true},
   dateSent: {type: Date, default: Date.now}
 });

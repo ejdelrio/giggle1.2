@@ -21,6 +21,7 @@ const userRouter = require('./route/user-route.js');
 const albumRouter = require('./route/profile/album-route.js');
 const socketRouter = require('./route/socket-route/socket-route.js');
 const profileRouter = require('./route/profile-route.js');
+const convoRouter = require('./route/profile/convo-route.js');
 
 
 dotenv.load();
@@ -33,6 +34,7 @@ app.use(albumRouter);
 app.use(trackRouter);
 app.use(photoRouter);
 app.use(profileRouter);
+app.use(convoRouter);
 app.use(error);
 
 socketRouter(server);

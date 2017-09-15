@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const convoSchema = new Schema({
-  members: [{type: Schema.Types.ObjectId, ref: 'user'}],
+  members: [{type: String, ref: 'user'}],
 });
 
-const Convo = mongoose.model('convo', convoSchema);
+const Convo = module.exports = mongoose.model('convo', convoSchema);
