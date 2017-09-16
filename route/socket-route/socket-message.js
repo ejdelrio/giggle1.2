@@ -9,23 +9,26 @@ module.exports = (socket, io) => {
 
   socket.on('addMessagetoConvo', message => {
     debug('Message Emission');
-    /*Recieves a message object through a socket emission
-    The message is then emitted to the conversation ID.
-    The client will create a matching socket.on whenever the
-    conversations are rendered. The socket.on will update the state
-    of the individual conversation. This will broadcast
-    to all clients who's DB queries return the matching convo :D
-    */
-    let newMessage = new Message(message);
 
-    Conversation.findBy({_id: message.convoID})
+    let newMessage = new Message(message);
+    var updatingConvo;
+
+    Conversation.findOne({_id: message.convoID})
     .then(convo => {
-      convo.messages.push(newMessage);
-      return convo.messages.save();
+      updatingConvo = convo;
+      convo.messages.push(newMessage._id);
+      console.log(convo);
+      return convo.save();
     })
-    .then(() => newMessage.save())
+    .then(() => {
+      console.log('bacon')
+      return newMessage.save();
+    })
     .then(message => {
-      io.sockets.emit(`update-convo-${message.convoID}`);
+      updatingConvo.members.forEach(userName => {
+        console.log('__EMITTING_TO__:', `newMessage-${userName}`)
+        io.sockets.emit(`newMessage-${userName}`, message);
+      });
     })
     .catch(err => createError(400, err));
   });
@@ -35,17 +38,20 @@ module.exports = (socket, io) => {
     debug('startConvo Emission');
 
     let newConvo = new Conversation({members: data.members});
-    data.message.convoID = newConvo._id;
-    newConvo.push(data.message);
+    let newMessage = new Message(data.message);
+
+    newMessage.convoID = newConvo._id;
+    newConvo.messages.push(newMessage._id);
 
     newConvo.save()
     .then(() => {
-      return new Message(data.message).save();
+      return newMessage.save();
     })
     .then(() => {
       data.members.forEach(userName => {
         console.log(`__EMITTING__: updateConvos-${userName}`);
         io.sockets.emit(`updateConvos-${userName}`, newConvo);
+        io.sockets.emit(`newMessage-${userName}`, newMessage);
       });
     })
     .catch(err => createError(400, err));
