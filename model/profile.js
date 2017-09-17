@@ -16,7 +16,10 @@ const profileSchema = new Schema({
   members: [{type: Schema.Types.ObjectId, ref: 'member'}],
   photos: [{type: Schema.Types.ObjectId, ref: 'photo'}],
   videos: [{type: Schema.Types.ObjectId, ref: 'video'}],
-  location: [{type: Number, index: '2d'}]
+  location: [{type: Number, index: '2d'}],
+  city: {type: String, required: true},
+  state: {type: String, required: true}
+
 });
 
 const Profile = module.exports = mongoose.model('profile', profileSchema);

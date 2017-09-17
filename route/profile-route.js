@@ -58,6 +58,7 @@ profileRouter.get('/api/userQuery/:max/:limit', bearerAuth, profileFetch, functi
 
 profileRouter.put('/api/profile', jsonParser, bearerAuth, profileFetch, function(req, res, next) {
   debug('PUT /api/profile');
+  console.log(req.body);
 
   Profile.findByIdAndUpdate(req.profile._id, req.body, {new: true})
   .then(profile => res.json(profile))
