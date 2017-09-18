@@ -1,5 +1,7 @@
 'use strict';
 
+const path = require('path');
+
 const templates = module.exports = {};
 
 templates.userOne = {
@@ -24,5 +26,19 @@ templates.album = {
   title: 'Butt Juice',
   genre: 'Metal'
 };
+
+templates.track = {
+  title: 'Happy Christmas Songs',
+  url: 'http://localhost:1234',
+  soundFile: path.resolve(__dirname, '../../route/data/test.mp3')
+};
+
+templates.profileOne = {
+  userName: 'f**kboi',
+  type: 'band',
+  city: 'kitty city',
+  state: 'pleasantville',
+  bio: 'i love puppies',
+}
 
 templates.url = `localhost:${process.env.PORT}`;
