@@ -12,6 +12,7 @@ addons:
       - g++-4.8
 env:
   - CXX=g++-4.8
+  - AWS_BUCKET='cf-giggle-app'
 sudo: required
 before_script: npm i
 script:

@@ -24,7 +24,7 @@ describe('Track Routes', function () {
   //   .catch(err => done(err))
   // });
 
-  afterEach(done => {
+  after(done => {
     clearAll()
     .then(() => done())
     .catch(err => done(err));
@@ -81,16 +81,16 @@ describe('Track Routes', function () {
     });
   });
 
-  // describe('DELETE /api/album/:albumID/track/:trackID', function () {
-  //   describe('when given a valid id and token', function () {
-  //     it('deletes the item from the db and aws', (done) => {
-  //       request.delete(`${url}/api/album/${helper.storedItem.album._id}/track/${helper.storedItem.track._id}`)
-  //         .set({ Authorization: `Bearer ${deleteToken}` })
-  //         .end((err, rsp) => {
-  //           expect(rsp.status).to.equal(204);
-  //           done();
-  //         })
-  //     })
-  //   })
-  // })
+  describe('DELETE /api/album/:albumID/track/:trackID', function () {
+    describe('when given a valid id and token', function () {
+      it('deletes the item from the db and aws', (done) => {
+        request.delete(`${url}/api/album/${helper.models.album._id}/track/${helper.models.track._id}`)
+          .set({ Authorization: `Bearer ${deleteToken}` })
+          .end((err, rsp) => {
+            expect(rsp.status).to.equal(204);
+            done();
+          })
+      })
+    })
+  })
 });
