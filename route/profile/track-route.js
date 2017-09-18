@@ -69,7 +69,7 @@ trackRouter.post('/api/album/:id/track', jsonParser, bearerAuth, profileFetch, u
     let trackData = {
       title: req.body.title,
       url: req.body.url,
-      profileID: req.user._id,
+      profileID: req.profile._id,
       albumID: req.params.id,
       awsKey: trackKey,
       awsURI: s3data.location

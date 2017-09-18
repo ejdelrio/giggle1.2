@@ -74,7 +74,7 @@ describe('Track Routes', function () {
             expect(res.body.url).to.equal(templates.track.url);
             expect(res.body.albumID).to.equal(templates.track.albumID.toString());
             //TODO: fix bug
-            // expect(res.body.profileID).to.equal(templates.track.profileID.toString());
+            expect(res.body.profileID).to.equal(templates.track.profileID.toString());
             done();
           });
       });
