@@ -8,8 +8,8 @@ const trackSchema = new Schema({
   title: {type: String, required: true},
   albumID: {type: Schema.Types.ObjectId, required: true},
   url: {type: String, required: true},
-  awsKey: {type: String, required: true},
-  awsURI: {type: String, required: true}
+  awsKey: {type: String, required: false},
+  awsURI: {type: String, required: false} //these are added by aws upload
 });
 
 const Track = module.exports = mongoose.model('track', trackSchema);

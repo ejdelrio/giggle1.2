@@ -12,7 +12,7 @@ const basicAuth = require('../lib/basic.js');
 const userRouter = module.exports = new Router();
 
 
-userRouter.get('/oauth/google/code', (req, res, next) => {
+userRouter.get('/oauth/google', (req, res, next) => {
   if (!req.query.code) {
     res.redirect(process.env.CLIENT_URL);
   } else {
@@ -23,7 +23,7 @@ userRouter.get('/oauth/google/code', (req, res, next) => {
       grant_type: 'authorization_code',
       client_id: process.env.GOOGLE_CLIENT_ID,
       client_secret: process.env.GOOGLE_CLIENT_SECRET,
-      redirect_uri: `${process.env.API_URL}/oauth/google/code`
+      redirect_uri: `${process.env.API_URL}/oauth/google`
     })
     .then(response => {
       console.log('POST: oauth2/v4/token', response.body);
@@ -64,6 +64,7 @@ userRouter.post('/api/signup', jasonParser, function(req, res, next) {
   .then(token => {
     res.json(token);
   })
+  //useless comment
   .catch(err => next(createError(400, err.message)));
 
 });
