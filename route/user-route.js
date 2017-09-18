@@ -64,6 +64,7 @@ userRouter.post('/api/signup', jasonParser, function(req, res, next) {
   .then(token => {
     res.json(token);
   })
+  //useless comment
   .catch(err => next(createError(400, err.message)));
 
 });
