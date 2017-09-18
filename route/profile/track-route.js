@@ -25,15 +25,17 @@ const trackRouter = module.exports = Router();
 var trackKey = '';
 
 function s3uploadProm(params) {
+  console.log('called s3uploadProm', params);
   return new Promise((resolve, reject) => {
     s3.upload(params, (err, s3data) => {
-      if(err) reject(err);
+      if(err) console.log('s3uploadProm error', err);
+      console.log('s3datas', s3data);
       resolve(s3data);
     });
   });
 }
 
-trackRouter.post('/api/album/:id/track',jsonParser, bearerAuth, profileFetch, upload.single('soundFile'), function (req, res, next) {
+trackRouter.post('/api/album/:id/track', bearerAuth, profileFetch, upload.single('soundFile'), function (req, res, next) {
   debug('POST: /api/album/:id/track');
 
   if (!req.file) return next(createError(400, 'file not found'));
@@ -58,7 +60,9 @@ trackRouter.post('/api/album/:id/track',jsonParser, bearerAuth, profileFetch, up
     album.tracks.push(track._id);
     album.save();
   })
-  .then(() => s3uploadProm(params))
+  .then(() => {
+    return s3uploadProm(params)
+  })
   .then(s3data => {
     trackKey = s3data.key;
     del([`${dataDir}/*`]);
