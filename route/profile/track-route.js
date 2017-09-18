@@ -35,7 +35,7 @@ function s3uploadProm(params) {
   });
 }
 
-trackRouter.post('/api/album/:id/track', bearerAuth, profileFetch, upload.single('soundFile'), function (req, res, next) {
+trackRouter.post('/api/album/:id/track', jsonParser, bearerAuth, profileFetch, upload.single('soundFile'), function (req, res, next) {
   debug('POST: /api/album/:id/track');
 
   if (!req.file) return next(createError(400, 'file not found'));
