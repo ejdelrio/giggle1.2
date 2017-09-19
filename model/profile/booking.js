@@ -5,8 +5,6 @@ const debug = require('debug')('giggle: Booking Model');
 const Schema = mongoose.Schema;
 
 const bookingModel = new Schema({
-  venueID: {type: Schema.Types.ObjectId, required: true},
-  bandID: {type: Schema.Types.ObjectId, required: true},
   date: {type: Date, required: true},
   venueName: {type: String, required: true},
   bandName: {type: String, required:true},
