@@ -11,8 +11,10 @@ const bookingModel = new Schema({
   coverCharge: {type: Number, default: 0},
   compensation: {type: Number, default: 0},
   description: {type: String, required: false},
-  coords: [{type: Number, index: '2d'}],
+  location: [{type: Number, index: '2d'}],
   showImage: {type: String, required: false},
+  bandConfirm: {type: Boolean, default: false},
+  venueConfirm: {type: Boolean, default: false},
   notifications: [{type: Schema.Types.ObjectId, ref: 'bookingNotification'}]
 });
 

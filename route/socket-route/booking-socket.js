@@ -11,17 +11,23 @@ const bookingSocket = module.exports = (socket, io) => {
   socket.on('requestBooking', bookingObj => {
     debug('Request Booking Socket Event');
 
+    bookingObj.coverCharge = parseInt(bookingObj.coverCharge);
+    bookingObj.compensation = parseInt(bookingObj.compensation);
+
+    console.log(bookingObj)
     let newNote =  new BookingNote();
     let newBooking = new Booking(bookingObj);
     newNote.bookingID = newBooking._id;
     newBooking.notifications.push(newNote._id);
-
+    console.log(newBooking)
     newBooking.save()
     .then(booking => {
+      console.log('Booking Saved');
       newNote.content = `${bookingObj.author} has requested a booking!`;
       newNote.save();
     })
     .then(() => {
+      console.log('Notifiaction Saved');
       io.sockets.emit(`newBooking-${newBooking.venueName}`, newBooking);
       io.sockets.emit(`newBooking-${newBooking.bandName}`, newBooking);
       io.sockets.emit(`newNotification-${newBooking.venueName}`, newNote);
