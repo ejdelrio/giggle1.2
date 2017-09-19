@@ -12,10 +12,10 @@ const basicAuth = require('../lib/basic.js');
 const userRouter = module.exports = new Router();
 
 
-userRouter.get('/oauth/google', (req, res, next) => {
+userRouter.get('/oauth/google/code', (req, res, next) => {
   if (!req.query.code) {
     res.redirect(process.env.CLIENT_URL);
-  } else {
+  } else { 
     superagent.post('https://www.googleapis.com/oauth2/v4/token')
     .type('form')
     .send({
@@ -23,7 +23,7 @@ userRouter.get('/oauth/google', (req, res, next) => {
       grant_type: 'authorization_code',
       client_id: process.env.GOOGLE_CLIENT_ID,
       client_secret: process.env.GOOGLE_CLIENT_SECRET,
-      redirect_uri: `${process.env.API_URL}/oauth/google`
+      redirect_uri: `${process.env.API_URL}/oauth/google/code`
     })
     .then(response => {
       console.log('POST: oauth2/v4/token', response.body);
