@@ -42,23 +42,42 @@ profileRouter.get('/api/userQuery/', bearerAuth, profileFetch, function(req, res
   debug('GET /api/userQuery/'); //Test to see if radial searches work;
   //the limit parameter dictates how many items we'll pull per query
   //max represents max distance from the users location.
-  let maxDistance = parseInt(req.query.maxDistance);
+  let maxDistance = parseInt(req.query.maxDistance)/100;
   let coords = req.profile.location;
   let limit = parseInt(req.query.limit);
 
   let locationQuery = {
     location: {
       $near: coords,
-      $maxDistance: maxDistance,
-      $minDistance: 0.0000000000000000000000000000001
+      $maxDistance: maxDistance
     },
   };
 
   Profile.find(locationQuery)
-  .limit(limit).exec(function(err, result) {
+  .limit(limit)
+  .exec(function(err, result) {
     if(err) return next(createError(400, err.message));
+    let genres = req.query.genres;
+    console.log(genres.length, genres);
+    if(genres.length === 0 && genres === '') return res.json(result);
 
-    res.json(result);
+    let genreHashMap = {};
+    let newResult = [];
+    genres.split(' ').forEach(val => {
+      genreHashMap[val] = true;
+    });
+
+    result.forEach(val => {
+      for (let i = 0; i < val.genre.length; i++) {
+        if(genreHashMap[val.genre[i]]) {
+          newResult.push(val);
+          break;
+        }
+      }
+    });
+
+
+    res.json(newResult);
   })
   .catch(err => next(createError(404, err)));
 });
