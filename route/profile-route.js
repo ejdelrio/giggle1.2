@@ -51,6 +51,7 @@ profileRouter.get('/api/userQuery/', bearerAuth, profileFetch, function(req, res
       $near: coords,
       $maxDistance: maxDistance
     },
+    type: req.query.type
   };
 
   Profile.find(locationQuery)
