@@ -17,7 +17,7 @@ const profileFetch = require('../../lib/profileFetch.js');
 AWS.config.setPromisesDependency(require('bluebird'));
 
 const s3 = new AWS.S3();
-const dataDir = `${__dirname}/../data`;
+const dataDir = `${__dirname}/../data-photos`;
 const upload = multer({ dest: dataDir });
 
 const photoRouter = module.exports = Router();
@@ -39,7 +39,6 @@ photoRouter.post('/api/photo', bearerAuth, profileFetch, upload.single('imageFil
 
   if (!req.file.path) return next(createError(500, 'file not saved'));
 
-
   let ext = path.extname(req.file.originalname);
 
   let params = {
@@ -48,28 +47,28 @@ photoRouter.post('/api/photo', bearerAuth, profileFetch, upload.single('imageFil
     Key: `${req.file.filename}${ext}`,
     Body: fs.createReadStream(req.file.path)
   };
-  req.body.profileID = req.user.profile._id;
-
 
   s3uploadProm(params)
   .then(s3data => {
-    let photoKey = s3data.key;
+    console.log(s3data);
+    photoKey = s3data.key;
+
     del([`${dataDir}/*`]);
     let photoData = {
       url: req.body.url,
-      profileID: req.body.profileID,
+      profileID: req.profile._id,
       awsKey: photoKey,
       awsURI: s3data.location
     };
     return new Photo(photoData).save();
   })
-  .then(track => {
-    console.log('CREATED THE TRACK!', track);
-    res.json(track);
+  .then(photo => {
+    console.log('CREATED THE PHOTO!', photo);
+    res.json(photo);
   })
   .catch(err => next(createError(404, err.message)));
 
-});
+});``
 
 photoRouter.delete('/api/photo/:id', bearerAuth, profileFetch, function (req, res, done) {
   console.log(req.body);
@@ -87,7 +86,7 @@ photoRouter.delete('/api/photo/:id', bearerAuth, profileFetch, function (req, re
     });
   }
 
-  Photo.findByIdAndRemove(`${req.params._id}`)
+  Photo.findByIdAndRemove(`${req.params.id}`)
   .then(() => s3deleteProm(params))
   .then(() => console.log('deleted ', params.Key))
   .then(() => {

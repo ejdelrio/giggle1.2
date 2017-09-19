@@ -6,10 +6,10 @@ const debug = require('debug')('giggle: Photo Schema');
 
 
 const photoSchema = new Schema({
-  profileID: {type: Schema.Types.ObjectId, required: true},
+  profileID: {type: Schema.Types.ObjectId, required: false}, //added later
   url: {type: String, required: true},
-  awsKey: {type: String, required: true},
-  awsURI: {type: String, required: true}
+  awsKey: {type: String, required: false},
+  awsURI: {type: String, required: false}
 });
 
 

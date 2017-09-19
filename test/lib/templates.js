@@ -41,4 +41,10 @@ templates.profileOne = {
   bio: 'i love puppies',
 }
 
+templates.photo = {
+  title: 'parser photo',
+  url: 'http://localhost:1234',
+  imageFile: path.resolve(__dirname, '../../route/data/parser.jpg')
+}
+
 templates.url = `localhost:${process.env.PORT}`;
