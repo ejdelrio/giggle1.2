@@ -42,7 +42,7 @@ profileRouter.get('/api/userQuery/', bearerAuth, profileFetch, function(req, res
   debug('GET /api/userQuery/'); //Test to see if radial searches work;
   //the limit parameter dictates how many items we'll pull per query
   //max represents max distance from the users location.
-  let maxDistance = parseInt(req.query.maxDistance)/1000;
+  let maxDistance = parseInt(req.query.maxDistance);
   let coords = req.profile.location;
   let limit = parseInt(req.query.limit);
 
@@ -58,7 +58,7 @@ profileRouter.get('/api/userQuery/', bearerAuth, profileFetch, function(req, res
   .limit(limit).exec(function(err, result) {
     if(err) return next(createError(400, err.message));
 
-    res.json(result.body);
+    res.json(result);
   })
   .catch(err => next(createError(404, err)));
 });
