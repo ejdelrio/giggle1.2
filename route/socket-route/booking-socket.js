@@ -1,28 +1,58 @@
 'use strict';
 
 const debug = require('debug')('giggle: Booking Socket');
+const createError = require('http-errors');
+
 const Booking = require('../../model/profile/booking.js');
-const createError = require('http-erros');
+const BookingNote = require('../../model/profile/booking-notification.js');
 
 const bookingSocket = module.exports = (socket, io) => {
 
   socket.on('requestBooking', bookingObj => {
-    new Booking(bookingObj)
-    .save()
+    debug('Request Booking Socket Event');
+
+    let newNote =  new BookingNote();
+    let newBooking = new Booking(bookingObj);
+    newNote.bookingID = newBooking._id;
+    newBooking.notifications.push(newNote._id);
+
+    newBooking.save()
     .then(booking => {
-      io.sockets.emit(`newBooking-${booking.venueName}`);
-      io.sockets.emit(`newBooking-${booking.bandName}`);
+      newNote.content = `${bookingObj.author} has requested a booking!`;
+      newNote.save();
+    })
+    .then(() => {
+      io.sockets.emit(`newBooking-${newBooking.venueName}`, newBooking);
+      io.sockets.emit(`newBooking-${newBooking.bandName}`, newBooking);
+      io.sockets.emit(`newNotification-${newBooking.venueName}`, newNote);
+      io.sockets.emit(`newNotification-${newBooking.bandName}`, newNote);
+
     })
     .catch(err => createError(400, err));
   });
 
-  socket.on('updateBooking', bookingObj => {
+  socket.on('updateBooking', (bookingObj => {
+    debug('Update Booking Socket Event');
+
+    var newBooking;
+    let newNote = new BookingNote({
+      content: `${bookingObj.author} has updated the booking`
+    });
+    bookingObj.notifications.push(newNote._id);
+
     Booking.findByIdAndUpdate(bookingObj)
     .save()
     .then(booking => {
-      io.sockets.emit(`updateBooking-${booking.venueName}`);
-      io.sockets.emit(`updateBooking-${booking.bandName}`);
+      newBooking = booking;
+      newNote.bookingID = booking._id;
+      io.sockets.emit(`updateBooking-${booking.venueName}`, booking);
+      io.sockets.emit(`updateBooking-${booking.bandName}`, booking);
+      return newNote.save();
+    })
+    .then(() => {
+      io.sockets.emit(`newNotification-${newBooking.venueName}`, newNote);
+      io.sockets.emit(`newNotification-${newBooking.bandName}`, newNote);
     })
     .catch(err => createError(400, err));
-  });
+  }));
 };
