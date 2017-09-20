@@ -12,6 +12,8 @@ const bookingModel = new Schema({
   compensation: {type: Number, default: 0},
   description: {type: String, required: false},
   location: [{type: Number, index: '2d'}],
+  city: {type: String, required: true},
+  state: {type: String, required: true},
   showImage: {type: String, required: false},
   bandConfirm: {type: Boolean, default: false},
   venueConfirm: {type: Boolean, default: false},

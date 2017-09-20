@@ -14,12 +14,12 @@ const bookingSocket = module.exports = (socket, io) => {
     bookingObj.coverCharge = parseInt(bookingObj.coverCharge);
     bookingObj.compensation = parseInt(bookingObj.compensation);
 
-    console.log(bookingObj)
+
     let newNote =  new BookingNote();
     let newBooking = new Booking(bookingObj);
     newNote.bookingID = newBooking._id;
     newBooking.notifications.push(newNote._id);
-    console.log(newBooking)
+
     newBooking.save()
     .then(booking => {
       console.log('Booking Saved');
@@ -46,13 +46,11 @@ const bookingSocket = module.exports = (socket, io) => {
     });
     bookingObj.notifications.push(newNote._id);
 
-    Booking.findByIdAndUpdate(bookingObj)
-    .save()
+    Booking.findByIdAndUpdate(bookingObj._id, bookingObj, {new: true})
     .then(booking => {
-      newBooking = booking;
       newNote.bookingID = booking._id;
-      io.sockets.emit(`updateBooking-${booking.venueName}`, booking);
-      io.sockets.emit(`updateBooking-${booking.bandName}`, booking);
+      io.sockets.emit(`updateBooking-${booking.venueName}`, bookingObj);
+      io.sockets.emit(`updateBooking-${booking.bandName}`, bookingObj);
       return newNote.save();
     })
     .then(() => {
