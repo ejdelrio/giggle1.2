@@ -60,9 +60,13 @@ describe('Booking Routes', function () {
         .set('Authorization', `Bearer ${helper.tokens.userOne}`)
         .end((err, res) => {
           if (err) console.error(err);
+          let {booking} = res.body;
           expect(res.status).to.equal(200);
           console.log('damnit eddie', res.body);
-          expect(res.body).to.equal([templates.bookingBand])
+          res.body.forEach(function(result) {
+            expect(result.bandName).to.equal(templates.profileBand.userName);
+            expect(result.venueName).to.equal(templates.profileVenue.userName);
+          })
           done();
         })
     })

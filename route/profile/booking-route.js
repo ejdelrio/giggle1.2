@@ -16,9 +16,9 @@ bookingRouter.get('/api/booking', bearerAuth, profileFetch, function(req, res, n
   
   Booking.find(name)
   .populate('bookingNotifications')
-  .then((category) => {
-    console.log('__BOOKING__', category);
-    res.json(category);
+  .then((bookingResults) => {
+    console.log('__BOOKING__', bookingResults);
+    res.json(bookingResults);
   })
   .catch((err) => {
     console.error(err);
