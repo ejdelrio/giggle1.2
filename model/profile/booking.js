@@ -17,7 +17,7 @@ const bookingModel = new Schema({
   showImage: {type: String, required: false},
   bandConfirm: {type: Boolean, default: false},
   venueConfirm: {type: Boolean, default: false},
-  notifications: [{type: Schema.Types.ObjectId, ref: 'bookingNotification'}]
+  notifications: [{type: Schema.Types.ObjectId, ref: 'booking-notification'}]
 });
 
 const Booking = module.exports = mongoose.model('booking', bookingModel);

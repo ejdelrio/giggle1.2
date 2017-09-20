@@ -21,13 +21,11 @@ const bookingSocket = module.exports = (socket, io) => {
     newBooking.notifications.push(newNote._id);
 
     newBooking.save()
-    .then(booking => {
-      console.log('Booking Saved');
+    .then(() => {
       newNote.content = `${bookingObj.author} has requested a booking!`;
       newNote.save();
     })
     .then(() => {
-      console.log('Notifiaction Saved');
       io.sockets.emit(`newBooking-${newBooking.venueName}`, newBooking);
       io.sockets.emit(`newBooking-${newBooking.bandName}`, newBooking);
       io.sockets.emit(`newNotification-${newBooking.venueName}`, newNote);
@@ -43,6 +41,32 @@ const bookingSocket = module.exports = (socket, io) => {
     var newBooking;
     let newNote = new BookingNote({
       content: `${bookingObj.author} has updated the booking`
+    });
+    bookingObj.notifications.push(newNote._id);
+    bookingObj.bandConfirm = false;
+    bookingObj.venueConfirm = false;
+
+    Booking.findByIdAndUpdate(bookingObj._id, bookingObj, {new: true})
+    .then(booking => {
+      newNote.bookingID = booking._id;
+      io.sockets.emit(`updateBooking-${booking.venueName}`, bookingObj);
+      io.sockets.emit(`updateBooking-${booking.bandName}`, bookingObj);
+      return newNote.save();
+    })
+    .then(() => {
+      io.sockets.emit(`newNotification-${newBooking.venueName}`, newNote);
+      io.sockets.emit(`newNotification-${newBooking.bandName}`, newNote);
+    })
+    .catch(err => createError(400, err));
+  }));
+
+
+  socket.on('confirmBooking', (bookingObj => {
+    debug('Confirm Booking Socket Event');
+
+    var newBooking;
+    let newNote = new BookingNote({
+      content: `${bookingObj.author} has confirmed your booking`
     });
     bookingObj.notifications.push(newNote._id);
 

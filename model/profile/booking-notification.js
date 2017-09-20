@@ -10,7 +10,7 @@ const bookingNotificationModel = new Schema({
   seenByVenue: {type: Boolean, default: false},
   seenByBand: {type: Boolean, default: false},
   content: {type: String, required: true},
-  bookingID: {type: String, required: true}
+  bookingID: {type: Schema.Types.ObjectId, required: true}
 });
 
-const bookingNotification = module.exports = mongoose.model('bookingNotification', bookingNotificationModel);
+const bookingNotification = module.exports = mongoose.model('booking-notification', bookingNotificationModel);
