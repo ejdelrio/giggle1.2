@@ -36,7 +36,7 @@ describe('Photo Routes', function () {
         authenticateUser('userOne')
           .then(user => {
             templates.photo.userID = user._id;
-            return storeModel(Profile, 'profileOne', 'userOne')
+            return storeModel(Profile, 'profileBand', 'userOne')
               .catch(err => console.log(err));
           })
           .then(profile => {
