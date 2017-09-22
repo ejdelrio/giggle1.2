@@ -18,7 +18,7 @@ const profileFetch = require('../../lib/profileFetch.js');
 AWS.config.setPromisesDependency(require('bluebird'));
 
 const s3 = new AWS.S3();
-const dataDir = `${__dirname}/../data`;
+const dataDir = `${__dirname}/../data-mp3s`;
 const upload = multer({ dest: dataDir });
 
 const trackRouter = module.exports = Router();
