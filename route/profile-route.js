@@ -44,7 +44,7 @@ profileRouter.get('/api/userQuery/', bearerAuth, profileFetch, function(req, res
   //the limit parameter dictates how many items we'll pull per query
   //max represents max distance from the users location.
   let maxDistance = parseInt(req.query.maxDistance)/100;
-  let coords = req.profile.location;
+  let coords = req.query.location;
   let limit = parseInt(req.query.limit);
 
   let locationQuery = {
@@ -61,15 +61,16 @@ profileRouter.get('/api/userQuery/', bearerAuth, profileFetch, function(req, res
     if(err) return next(createError(400, err.message));
     let genres = req.query.genres;
     if(genres === '') return res.json(result);
-    console.log('__GENRES__',genres)
+
+
     let genreHashMap = {};
     let newResult = [];
+
     genres.split(' ').forEach(val => {
       genreHashMap[val] = true;
     });
-    console.log('__GENRE_HASH_MAP__', genreHashMap);
+
     result.forEach(val => {
-      console.log('__PROFILE__', val);
       for (let i = 0; i < val.genre.length; i++) {
 
         if(genreHashMap[val.genre[i]]) {
