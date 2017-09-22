@@ -16,6 +16,7 @@ profileRouter.post('/api/profile', jsonParser, bearerAuth, function(req, res, ne
 
   req.body.userID = req.user._id;
   req.body.userName = req.user.userName;
+  req.body.avatar = 'http://lh5.ggpht.com/_S0f-AWxKVdM/S5TprpHWsZI/AAAAAAAAL6c/QWXlAX3IGgQ/d_silhouette_horn_hand%5B2%5D.jpg?imgmax=800';
 
   new Profile(req.body).save()
   .then(profile => res.json(profile))
@@ -30,35 +31,58 @@ profileRouter.get('/api/profile', bearerAuth, profileFetch, function(req, res, n
   next();
 });
 
-profileRouter.get('/api/userQuery/:max/:limit', bearerAuth, profileFetch, function(req, res, next) {
-  debug('GET /api/userQuery/:max/:limit'); //Test to see if radial searches work;
+profileRouter.get('/api/profile/:userName', function(req, res, next) {
+  debug('GET /api/profile');
 
+  Profile.findOne({userName: req.params.userName})
+  .then(profile => res.json(profile))
+  .catch(err => next(createError(404, err)));
+});
+
+profileRouter.get('/api/userQuery/', bearerAuth, profileFetch, function(req, res, next) {
+  debug('GET /api/userQuery/'); //Test to see if radial searches work;
   //the limit parameter dictates how many items we'll pull per query
   //max represents max distance from the users location.
-  let maxDistance = req.params.max/1000;
+  let maxDistance = parseInt(req.query.maxDistance)/100;
   let coords = req.profile.location;
-  let limit = parseInt(req.params.limit);
+  let limit = parseInt(req.query.limit);
+
   let locationQuery = {
     location: {
       $near: coords,
-      $maxDistance: maxDistance,
-      $minDistance: 0.0000000000000000000000000000001
+      $maxDistance: maxDistance
     },
-    genre: ['blues', 'metal']
-
-
+    type: req.query.type
   };
 
   Profile.find(locationQuery)
-  .limit(limit).exec(function(err, result) {
+  .limit(limit)
+  .exec(function(err, result) {
     if(err) return next(createError(400, err.message));
+    let genres = req.query.genres;
+    if(genres.length === 0 && genres === '') return res.json(result);
+
+    let genreHashMap = {};
+    let newResult = [];
+    genres.split(' ').forEach(val => {
+      genreHashMap[val] = true;
+    });
+
+    result.forEach(val => {
+      for (let i = 0; i < val.genre.length; i++) {
+        if(genreHashMap[val.genre[i]]) {
+          newResult.push(val);
+          break;
+        }
+      }
+    });
     res.json(result);
-  });
+  })
+  .catch(err => next(createError(404, err)));
 });
 
 profileRouter.put('/api/profile', jsonParser, bearerAuth, profileFetch, function(req, res, next) {
   debug('PUT /api/profile');
-  console.log(req.body);
 
   Profile.findByIdAndUpdate(req.profile._id, req.body, {new: true})
   .then(profile => res.json(profile))

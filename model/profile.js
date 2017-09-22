@@ -8,7 +8,6 @@ const profileSchema = new Schema({
   userID: {type: Schema.Types.ObjectId, required: true, unique: true},
   userName: {type: String, unique: true, required: true},
   type: {type: String, required: true, unique: false},
-  avatar: {type: String, required: false, unique: false},
   bio: {type: String, required: true, unique: false},
   genre: [{type: String}],
   conversations: [{type: Schema.Types.ObjectId, ref: 'convo'}],
@@ -18,7 +17,10 @@ const profileSchema = new Schema({
   videos: [{type: Schema.Types.ObjectId, ref: 'video'}],
   location: [{type: Number, index: '2d'}],
   city: {type: String, required: true},
-  state: {type: String, required: true}
+  state: {type: String, required: true},
+  avatar: {type: String},
+  awsKey: {type: String},
+  awsURI: {type: String}
 
 });
 
