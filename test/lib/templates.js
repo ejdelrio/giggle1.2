@@ -30,7 +30,7 @@ templates.album = {
 templates.track = {
   title: 'Happy Christmas Songs',
   url: 'http://localhost:1234',
-  soundFile: path.resolve(__dirname, '../../route/data/test.mp3')
+  soundFile: path.resolve(__dirname, '../../route/data-mp3s/test.mp3')
 };
 
 templates.profileBand = {
@@ -40,6 +40,14 @@ templates.profileBand = {
   state: 'pleasantville',
   bio: 'i love puppies',
 }
+
+
+templates.photo = {
+  title: 'parser photo',
+  url: 'http://localhost:1234',
+  imageFile: path.resolve(__dirname, '../../route/data-photos/parser.jpg')
+}
+
 
 templates.profileVenue = {
   userName: 'the hobo triangle out front',
@@ -62,5 +70,6 @@ templates.bookingBand = {
 // description: {type: String, required: false},
 // coords: [{type: Number, index: '2d'}],
 // showImage: {type: String, required: false}
+
 
 templates.url = `localhost:${process.env.PORT}`;
