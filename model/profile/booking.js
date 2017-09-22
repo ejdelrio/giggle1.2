@@ -18,6 +18,7 @@ const bookingModel = new Schema({
   showImage: {type: String, required: false},
   bandConfirm: {type: Boolean, default: false},
   venueConfirm: {type: Boolean, default: false},
+  avatar: {type: String},
   notifications: [{type: Schema.Types.ObjectId, ref: 'booking-notification'}]
 });
 

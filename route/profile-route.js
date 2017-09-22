@@ -16,6 +16,7 @@ profileRouter.post('/api/profile', jsonParser, bearerAuth, function(req, res, ne
 
   req.body.userID = req.user._id;
   req.body.userName = req.user.userName;
+  req.body.avatar = 'http://lh5.ggpht.com/_S0f-AWxKVdM/S5TprpHWsZI/AAAAAAAAL6c/QWXlAX3IGgQ/d_silhouette_horn_hand%5B2%5D.jpg?imgmax=800';
 
   new Profile(req.body).save()
   .then(profile => res.json(profile))
