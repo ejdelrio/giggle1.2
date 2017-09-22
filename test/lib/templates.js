@@ -30,7 +30,7 @@ templates.album = {
 templates.track = {
   title: 'Happy Christmas Songs',
   url: 'http://localhost:1234',
-  soundFile: path.resolve(__dirname, '../../route/data/test.mp3')
+  soundFile: path.resolve(__dirname, '../../route/data-mp3s/test.mp3')
 };
 
 templates.profileOne = {
@@ -44,7 +44,7 @@ templates.profileOne = {
 templates.photo = {
   title: 'parser photo',
   url: 'http://localhost:1234',
-  imageFile: path.resolve(__dirname, '../../route/data/parser.jpg')
+  imageFile: path.resolve(__dirname, '../../route/data-photos/parser.jpg')
 }
 
 templates.url = `localhost:${process.env.PORT}`;
