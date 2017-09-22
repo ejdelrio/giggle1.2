@@ -27,6 +27,7 @@ function s3uploadProm(params) {
   return new Promise((resolve, reject) => {
     s3.upload(params, (err, s3data) => {
       if(err) reject(err);
+      console.log('_S3DATA', s3data);
       resolve(s3data);
     });
   });
@@ -63,6 +64,7 @@ photoRouter.post('/api/photo', bearerAuth, profileFetch, upload.single('imageFil
     return new Photo(photoData).save();
   })
   .then(photo => {
+
     console.log('CREATED THE PHOTO!', photo);
     res.json(photo);
   })
@@ -96,4 +98,42 @@ photoRouter.delete('/api/photo/:id', bearerAuth, profileFetch, function (req, re
   .catch((err) => {
     done(err);
   });
+});
+
+photoRouter.post('/api/avatar', bearerAuth, profileFetch, upload.single('image'), function (req, res, next) {
+  debug('POST: /api/avatar');
+  console.log('__REQUEST__:', req);
+  if (!req.file) return next(createError(400, 'file not found'));
+
+  if (!req.file.path) return next(createError(500, 'file not saved'));
+
+  let ext = path.extname(req.file.originalname);
+
+  let params = {
+    ACL: 'public-read',
+    Bucket: process.env.AWS_BUCKET,
+    Key: `${req.file.filename}${ext}`,
+    Body: fs.createReadStream(req.file.path)
+  };
+  req.body.profileID = req.profile._id;
+
+  console.log('__PARAMS__:', params);
+
+  s3uploadProm(params)
+  .then(s3data => {
+    console.log('__S3DATA__',s3data);
+    let photoKey = s3data.key;
+    del([`${dataDir}/*`]);
+    let profile = req.profile;
+    profile.avatar = req.body.url,
+    profile.awsKey = photoKey,
+    profile.awsURI = s3data.location;
+    return profile.save();
+  })
+  .then(profile => {
+    console.log('__PROFILE__', profile);
+    res.json(profile);
+  })
+  .catch(err => next(createError(404, err.message)));
+
 });
