@@ -13,4 +13,4 @@ const bookingNotificationModel = new Schema({
   bookingID: {type: Schema.Types.ObjectId, required: true}
 });
 
-const bookingNotification = module.exports = mongoose.model('booking-notification', bookingNotificationModel);
+const bookingNotification = module.exports = mongoose.model('bookingNotification', bookingNotificationModel);

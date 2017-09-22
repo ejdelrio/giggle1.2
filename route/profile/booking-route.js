@@ -18,7 +18,7 @@ bookingRouter.get('/api/booking', bearerAuth, profileFetch, function(req, res, n
   let name = (type === 'band') ? {bandName: userName} : {venueName: userName};
 
   Booking.find(name)
-  .populate('booking-notification')
+  .populate('bookingNotification')
   .then((bookingResults) => {
     console.log(bookingResults);
     res.json(bookingResults);
@@ -40,7 +40,7 @@ bookingRouter.get('/api/booking/:userName', function(req, res, next) {
     let queryType = `${profile.type}Name`;
     return Booking.findOne({[queryType]: profile.userName});
   })
-  .populate('booking-notification')
+  .populate('bookingNotification')
   .then((bookingResults) => {
     res.json(bookingResults);
   })
