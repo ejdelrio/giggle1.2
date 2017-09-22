@@ -60,23 +60,25 @@ profileRouter.get('/api/userQuery/', bearerAuth, profileFetch, function(req, res
   .exec(function(err, result) {
     if(err) return next(createError(400, err.message));
     let genres = req.query.genres;
-    if(genres.length === 0 && genres === '') return res.json(result);
-
+    if(genres === '') return res.json(result);
+    console.log('__GENRES__',genres)
     let genreHashMap = {};
     let newResult = [];
     genres.split(' ').forEach(val => {
       genreHashMap[val] = true;
     });
-
+    console.log('__GENRE_HASH_MAP__', genreHashMap);
     result.forEach(val => {
+      console.log('__PROFILE__', val);
       for (let i = 0; i < val.genre.length; i++) {
+
         if(genreHashMap[val.genre[i]]) {
           newResult.push(val);
           break;
         }
       }
     });
-    res.json(result);
+    res.json(newResult);
   })
   .catch(err => next(createError(404, err)));
 });
