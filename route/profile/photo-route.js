@@ -27,6 +27,7 @@ function s3uploadProm(params) {
   return new Promise((resolve, reject) => {
     s3.upload(params, (err, s3data) => {
       if(err) reject(err);
+      console.log('_S3DATA', s3data);
       resolve(s3data);
     });
   });
@@ -105,8 +106,8 @@ photoRouter.post('/api/avatar', bearerAuth, profileFetch, upload.single('image')
 
   if (!req.file.path) return next(createError(500, 'file not saved'));
 
-  console.log('_PRE_EXT_');
   let ext = path.extname(req.file.originalname);
+
   let params = {
     ACL: 'public-read',
     Bucket: process.env.AWS_BUCKET,
@@ -115,9 +116,11 @@ photoRouter.post('/api/avatar', bearerAuth, profileFetch, upload.single('image')
   };
   req.body.profileID = req.profile._id;
 
+  console.log('__PARAMS__:', params);
 
   s3uploadProm(params)
   .then(s3data => {
+    console.log('__S3DATA__',s3data);
     let photoKey = s3data.key;
     del([`${dataDir}/*`]);
     let profile = req.profile;
