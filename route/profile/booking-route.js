@@ -72,8 +72,6 @@ bookingRouter.get('/api/booking-query', function(req, res, next) {
     if(req.query.genres === '') return res.json(result);
     let genres = req.query.genres.split(' ');
     if(genres.length === 0) return res.json(result);
-    console.log(result);
-    console.log(genres);
 
 
     let genreHash = {};
