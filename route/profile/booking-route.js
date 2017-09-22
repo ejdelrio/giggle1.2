@@ -1,6 +1,7 @@
 const Router = require('express').Router;
 const debug = require('debug')('giggle:booking-route');
 const Booking = require('../../model/profile/booking.js');
+const createError = require('http-errors');
 
 const bearerAuth = require('../../lib/bearer.js');
 const profileFetch = require('../../lib/profileFetch.js');
@@ -24,12 +25,12 @@ bookingRouter.get('/api/booking', bearerAuth, profileFetch, function(req, res, n
   })
   .catch((err) => {
     console.error(err);
-    next(err);
+    next(createError(404, err));
   });
 });
 
 bookingRouter.get('/api/booking/:userName', function(req, res, next) {
-  debug('GET /api/booking');
+  debug('GET /api/booking/:userName');
 
   let {userName} = req.params;
 
@@ -47,4 +48,37 @@ bookingRouter.get('/api/booking/:userName', function(req, res, next) {
     console.error(err);
     next(err);
   });
+});
+
+bookingRouter.get('/api/booking-query', function(req, res, next) {
+  debug('GET /api/booking-query');
+
+  let {maxDistance, location, startDate, limit} = req.query;
+
+  let bookingQuery = {
+    location: {
+      $near: location,
+      $maxDistance: maxDistance
+    },
+    venueConfirm: true,
+    bandConfirm: true,
+    date: new Date(startDate)
+  };
+  Booking.find(bookingQuery)
+  .limit(parseInt(limit))
+  .exec(function(err, result) {
+    if(err) return next(createError(400, err.message));
+    let genres = req.query.genres.split(' ');
+    if(genres.length === 0) return res.json(result);
+    console.log(result);
+
+
+    let genreHash = {};
+    genres.forEach(val => {
+      genreHash[val] = true;
+    });
+    let newResult = result.filter(val => genreHash[val.genre]);
+    res.json(newResult);
+  })
+  .catch(err => next(createError(404, err)));
 });

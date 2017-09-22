@@ -59,7 +59,6 @@ profileRouter.get('/api/userQuery/', bearerAuth, profileFetch, function(req, res
   .exec(function(err, result) {
     if(err) return next(createError(400, err.message));
     let genres = req.query.genres;
-    console.log(genres.length, genres);
     if(genres.length === 0 && genres === '') return res.json(result);
 
     let genreHashMap = {};
@@ -76,9 +75,7 @@ profileRouter.get('/api/userQuery/', bearerAuth, profileFetch, function(req, res
         }
       }
     });
-
-
-    res.json(newResult);
+    res.json(result);
   })
   .catch(err => next(createError(404, err)));
 });

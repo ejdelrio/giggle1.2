@@ -7,6 +7,7 @@ const Schema = mongoose.Schema;
 const bookingModel = new Schema({
   date: {type: Date, required: true},
   venueName: {type: String, required: true},
+  genre: {type: String, required: true},
   bandName: {type: String, required:true},
   coverCharge: {type: Number, default: 0},
   compensation: {type: Number, default: 0},
